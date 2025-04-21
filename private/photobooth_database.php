@@ -4,7 +4,7 @@ class PhotoboothDatabase {
     private static ?\mysqli $conn = null;
     public static function connection(): \mysqli {
         if (self::$conn === null) {
-            self::$conn = new \mysqli("maglev.proxy.rlwy.net:19736", "root", "zYFxSbJltcGLHdBHTwNFrXUBRNLydHlV");
+            self::$conn = new \mysqli("localhost", "root", "");
             CustomThrow::exceptionWithCondition(
                 self::$conn->connect_error,
                 "Connection failed: " . self::$conn->connect_error
