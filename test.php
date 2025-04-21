@@ -1,5 +1,5 @@
 <?php 
-require_once __DIR__ . '/private/photobooth_repository.php';
+require_once 'private/photobooth_repository.php';
 $photos = PhotoboothRepository::getPhotos("kalfin");
 ?>
 <!DOCTYPE html>

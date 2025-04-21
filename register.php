@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once __DIR__ . '/private/register_user.php';
+require_once 'private/register_user.php';
 $errorMessage = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     $result = registerUser(

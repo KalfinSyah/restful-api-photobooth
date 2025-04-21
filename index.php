@@ -4,8 +4,8 @@ if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
 }
-require_once __DIR__ . '/private/generate_api_key.php';
-require_once __DIR__ . '/private/photobooth_repository.php';
+require_once 'private/generate_api_key.php';
+require_once 'private/photobooth_repository.php';
 $generatedApiKey = generateApiKey(isset($_POST['submit']), $_SESSION['username']);
 $apiKeys = PhotoboothRepository::getApiKeys($_SESSION['username']);
 ?>

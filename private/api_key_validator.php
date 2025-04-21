@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/photobooth_database.php';
+require_once 'photobooth_database.php';
 // Validate an API key
 function apiKeyValidator(string $apiKey): bool {
     $conn = PhotoboothDatabase::connection();

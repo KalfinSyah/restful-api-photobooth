@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/photobooth_database.php';
+require_once 'photobooth_database.php';
 function registerUser(string $username, string $password, string $re_enter_password): array {
     try {
         $conn = PhotoboothDatabase::connection();

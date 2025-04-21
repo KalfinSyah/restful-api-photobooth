@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/photobooth_database.php';
+require_once 'photobooth_database.php';
 function generateApiKey(bool $btn, string $username): array {
     // Check if form is submitted
     if (!$btn) {

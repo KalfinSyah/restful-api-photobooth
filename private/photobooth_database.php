@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/custom_throw.php';
+require_once 'custom_throw.php';
 class PhotoboothDatabase {
     private static ?\mysqli $conn = null;
     public static function connection(): \mysqli {

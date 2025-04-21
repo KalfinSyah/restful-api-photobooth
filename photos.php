@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/private/photobooth_repository.php';
-require_once __DIR__ . '/private/api_key_validator.php';
-require_once __DIR__ . '/private/custom_throw.php';
+require_once 'private/photobooth_repository.php';
+require_once 'private/api_key_validator.php';
+require_once 'private/custom_throw.php';
 header('Content-Type: application/json');
 try {
     // API Key validation

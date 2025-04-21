@@ -1,6 +1,6 @@
 <?php    
-require_once __DIR__ . '/photobooth_database.php';
-require_once __DIR__ . '/custom_throw.php';
+require_once 'photobooth_database.php';
+require_once 'custom_throw.php';
 class PhotoboothRepository extends PhotoboothDatabase {
     public static function addUser(string $username, string $password, string $re_enter_password): array {
         try {
