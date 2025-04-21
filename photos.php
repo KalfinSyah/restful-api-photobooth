@@ -30,6 +30,13 @@ try {
         $file = $_FILES['photo'];
         $jsonResponse = \json_encode(PhotoboothRepository::addPhoto($username, $file));
         echo $jsonResponse;
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+        if (isset($_GET['photo_id'])) {
+            $jsonResponse = \json_encode(PhotoboothRepository::deletePhoto($_GET['photo_id']));
+            echo $jsonResponse;
+        } else {
+            CustomThrow::exception('Invalid parameter');
+        }
     }
 } catch (Exception $e) {
     http_response_code(400);

@@ -4,6 +4,15 @@ require_once __DIR__ . '/private/api_key_validator.php';
 require_once __DIR__ . '/private/custom_throw.php';
 header('Content-Type: application/json');
 try {
+    // Handle PUT or JSON payloads
+    $rawInput = file_get_contents("php://input");
+    $contentType = $_SERVER["CONTENT_TYPE"] ?? '';
+    // Determine parsing strategy
+    if (stripos($contentType, 'application/json') !== false) {
+        $putData = json_decode($rawInput, true);
+    } else {
+        parse_str($rawInput, $putData);
+    }
     // API Key validation
     $headers = getallheaders();
     // Get API key from either header or GET parameter
@@ -41,6 +50,16 @@ try {
         $reEnterPassword = $_POST['re_enter_password'];
         if (isset($username) && isset($password)) {
             $jsonResponse = \json_encode(PhotoboothRepository::getUsers($username, $password));
+            echo $jsonResponse;
+        } else {
+            CustomThrow::exception('Invalid parameter');
+        }
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'PUT' && isset($putData['old_username']) && isset($putData['new_username'])) {
+
+        $oldUsername = $putData['old_username'];
+        $newUsername = $putData['new_username'];
+        if (isset($oldUsername) && isset($newUsername)) {
+            $jsonResponse = \json_encode(PhotoboothRepository::updateUsername($oldUsername, $newUsername));
             echo $jsonResponse;
         } else {
             CustomThrow::exception('Invalid parameter');

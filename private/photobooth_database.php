@@ -23,15 +23,13 @@ class PhotoboothDatabase {
                 )",
                 "CREATE TABLE IF NOT EXISTS users_api_keys (
                     id INT AUTO_INCREMENT PRIMARY KEY,
-                    -- user_id INT NOT NULL,
                     username VARCHAR(50) NOT NULL,
                     api_key VARCHAR(64) NOT NULL UNIQUE,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     last_used TIMESTAMP NULL,
                     expires_at TIMESTAMP NULL,
                     is_active TINYINT(1) DEFAULT 1,
-                    -- FOREIGN KEY (user_id) REFERENCES users(user_id),
-                    FOREIGN KEY (username) REFERENCES users(username)
+                    FOREIGN KEY (username) REFERENCES users(username) ON UPDATE CASCADE
                 )",
                 "CREATE TABLE IF NOT EXISTS photos (
                     photo_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -40,7 +38,7 @@ class PhotoboothDatabase {
                     mime_type VARCHAR(50) NOT NULL,
                     filename VARCHAR(255) NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (username) REFERENCES users(username),
+                    FOREIGN KEY (username) REFERENCES users(username) ON UPDATE CASCADE,
                     INDEX idx_username (username)
                 )"
             ];

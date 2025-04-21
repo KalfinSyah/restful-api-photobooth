@@ -40,6 +40,39 @@ class PhotoboothRepository extends PhotoboothDatabase {
             return ['status' => false, 'error' => 'system_error', 'message' => $e->getMessage()];
         }
     }
+    public static function updateUsername(string $oldUsername, string $newUsername): array {
+        try {
+            $conn = PhotoboothDatabase::connection();
+            // Clean inputs
+            $oldUsername = trim(stripslashes($oldUsername));
+            $newUsername = trim(stripslashes($newUsername));
+            // Check for empty values
+            if (empty($newUsername)) {
+                return ['status' => false, 'error' => 'username_empty', 'message' => 'Username cannot be empty.'];
+            }
+            if ($oldUsername === $newUsername) {
+                return ['status' => false, 'error' => 'no_change', 'message' => 'New username is the same as the current one.'];
+            }            
+            // This is the corrected line:
+            $stmt = $conn->prepare("UPDATE users SET username = ? WHERE username = ?");
+            if (!$stmt) {
+                return ['status' => false, 'error' => 'database_error', 'message' => $conn->error];
+            }
+            $stmt->bind_param("ss", $newUsername, $oldUsername);
+            if (!$stmt->execute()) {
+                // Handle duplicate username error
+                if ($conn->errno === 1062) {
+                    return ['status' => false, 'error' => 'username_exists', 'message' => 'Username already exists.'];
+                }
+                return ['status' => false, 'error' => 'database_error', 'message' => $stmt->error];
+            }
+            $stmt->close();
+            return ['status' => true, 'error' => null, 'message' => 'Successfully change username.'];
+        } catch (Exception $e) {
+            // Handle any exceptions from database connection
+            return ['status' => false, 'error' => 'system_error', 'message' => $e->getMessage()];
+        }
+    }
     public static function addPhoto(string $username, $file) {
         try {
             $conn = parent::connection();
@@ -56,26 +89,46 @@ class PhotoboothRepository extends PhotoboothDatabase {
             return ['status' => false, 'error' => 'system_error', 'message' => $e->getMessage()];
         }
     }
+    public static function deletePhoto(int $id) {
+        try {
+            $conn = parent::connection();
+            $stmt = $conn->prepare("DELETE FROM photos WHERE photo_id = ?");
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            // Check if any row was actually deleted
+            $affectedRows = $conn->affected_rows;
+            $stmt->close();
+            if ($affectedRows === 0) {
+                return ['status' => false, 'error' => 'not_found', 'message' => 'No photo found with that ID'];
+            }
+            return ['status' => true, 'error' => null, 'message' => 'Image Deleted Successfully.'];
+        } catch (Exception $e) {
+            // Generic error message for security
+            return ['status' => false, 
+                    'error' => 'system_error', 
+                    'message' => $e->getMessage()];
+        }
+    }
     public static function getUsers(?string $username = null, ?string $password = null): array {
         if ($username) {
             $conn = parent::connection();
             if ($password) {
                 $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
                 if (!$stmt) {
-                    return ['status' => false, 'error' => 'database_error', 'message' => $conn->error, 'data' => null];
+                    return ['status' => false, 'error' => 'database_error', 'message' => $conn->error];
                 }
                 $stmt->bind_param("s", $username);
                 $stmt->execute();
                 $result = $stmt->get_result();
                 if ($result->num_rows === 0) {
-                    return ['status' => false, 'error' => 'username_not_found', 'message' => 'Username not found', 'data' => null];
+                    return ['status' => false, 'error' => 'username_not_found', 'message' => 'Username not found'];
                 }
                 $user = $result->fetch_assoc();
                 if (!password_verify($password, $user['password_hash'])) {
-                    return ['status' => false, 'error' => 'invalid_credential', 'message' => 'Wrong password.', 'data' => null];
+                    return ['status' => false, 'error' => 'invalid_credential', 'message' => 'Wrong password.'];
                 }
                 $stmt->close();
-                return ['status' => true, 'error' => null, 'message' => 'Success login.', 'data' => $user];
+                return ['status' => true, 'error' => null, 'message' => 'Success login.'];
             } else {
                 $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
                 if (!$stmt) {
