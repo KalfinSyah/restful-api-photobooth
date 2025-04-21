@@ -47,7 +47,6 @@ try {
     } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username']) && isset($_POST['password'])) {
         $username = $_POST['username'];
         $password = $_POST['password'];
-        $reEnterPassword = $_POST['re_enter_password'];
         if (isset($username) && isset($password)) {
             $jsonResponse = \json_encode(PhotoboothRepository::getUsers($username, $password));
             echo $jsonResponse;
