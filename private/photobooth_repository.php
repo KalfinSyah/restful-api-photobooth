@@ -1,6 +1,7 @@
 <?php    
 require_once 'photobooth_database.php';
 require_once 'custom_throw.php';
+require_once 'get_image_mime_type.php';
 class PhotoboothRepository extends PhotoboothDatabase {
     public static function addUser(string $username, string $password, string $re_enter_password): array {
         try {
@@ -78,7 +79,7 @@ class PhotoboothRepository extends PhotoboothDatabase {
             $conn = parent::connection();
             // Process image upload
             $imageData = file_get_contents($file['tmp_name']);
-            $mimeType = mime_content_type($file['tmp_name']);
+            $mimeType = getImageMimeType($file['tmp_name']);
             $filename = basename($file['name']);
             $stmt = $conn->prepare("INSERT INTO photos (username, image_data, mime_type, filename) VALUES (?, ?, ?, ?)");
             $stmt->bind_param("ssss", $username, $imageData, $mimeType, $filename);
