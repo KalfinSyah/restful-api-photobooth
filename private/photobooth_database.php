@@ -1,17 +1,22 @@
 <?php
+// for read the .env
+require_once __DIR__ . '/../vendor/autoload.php';
+use Dotenv\Dotenv;
+$dotenv = Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
 require_once 'custom_throw.php';
 class PhotoboothDatabase {
     private static ?\mysqli $conn = null;
     public static function connection(): \mysqli {
         if (self::$conn === null) {
-            self::$conn = new \mysqli("localhost", "root", "");
+            self::$conn = new \mysqli($_ENV['MYSQLHOST'], $_ENV['MYSQLUSER'], $_ENV['MYSQLPASSWORD']);
             CustomThrow::exceptionWithCondition(
                 self::$conn->connect_error,
                 "Connection failed: " . self::$conn->connect_error
             );
             // create database if not exist
-            self::$conn->query("CREATE DATABASE IF NOT EXISTS web_photobooth");
-            self::$conn->select_db("web_photobooth");
+            self::$conn->query("CREATE DATABASE IF NOT EXISTS " . $_ENV['MYSQLDATABASE']);
+            self::$conn->select_db($_ENV['MYSQLDATABASE']);
             // create all tables if not exist
             $queries = [
                 "CREATE TABLE IF NOT EXISTS users (
